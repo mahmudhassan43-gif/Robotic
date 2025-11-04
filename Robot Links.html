@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Link Generator - Web Version</title>
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --danger-color: #ea4335;
+            --warning-color: #fbbc05;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+            --border-radius: 4px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-gray);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h1::before {
+            content: "🤖";
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .prefix-input {
+            display: flex;
+            align-items: center;
+        }
+        
+        .prefix {
+            background-color: var(--light-gray);
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-right: none;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            font-weight: bold;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-size: 1rem;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .hint {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #3367d6;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .links-section {
+            margin-top: 25px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        
+        .links-section h2 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .link-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            background-color: var(--light-gray);
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--dark-gray);
+        }
+        
+        .link-button:hover {
+            background-color: #e9e9e9;
+            border-color: #ccc;
+        }
+        
+        .link-button:disabled {
+            background-color: #f0f0f0;
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+        }
+        
+        .status.success {
+            background-color: #e6f4ea;
+            color: var(--secondary-color);
+            border: 1px solid #c4e6d4;
+        }
+        
+        .status.info {
+            background-color: #e8f0fe;
+            color: var(--primary-color);
+            border: 1px solid #c6dafc;
+        }
+        
+        .status.warning {
+            background-color: #fef7e0;
+            color: var(--warning-color);
+            border: 1px solid #fde293;
+        }
+        
+        .status.error {
+            background-color: #fce8e6;
+            color: var(--danger-color);
+            border: 1px solid #f5b7b1;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Robot Link Generator</h1>
+        <p class="subtitle">Generate quick access links for robot information</p>
+        
+        <div class="input-group">
+            <label for="robot-number">Enter Robot Number:</label>
+            <div class="prefix-input">
+                <span class="prefix">6E</span>
+                <input type="text" id="robot-number" placeholder="e.g., 12345" autofocus>
+            </div>
+            <p class="hint">6E prefix will be added automatically</p>
+        </div>
+        
+        <button id="generate-btn">Generate Links</button>
+        
+        <div class="links-section">
+            <h2>Generated Links</h2>
+            <a href="#" class="link-button" id="link-1" target="_blank" disabled>Drive Panel</a>
+            <a href="#" class="link-button" id="link-2" target="_blank" disabled>Robot Tickets</a>
+            <a href="#" class="link-button" id="link-3" target="_blank" disabled>Chassis Info</a>
+            <a href="#" class="link-button" id="link-4" target="_blank" disabled>Robot Kanban</a>
+        </div>
+        
+        <div id="status" class="status info">
+            Ready - Enter robot number (6E prefix will be added)
+        </div>
+    </div>
+    
+    <footer>
+        <p>Robot Link Generator - Web Version</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const robotInput = document.getElementById('robot-number');
+            const generateBtn = document.getElementById('generate-btn');
+            const linkButtons = [
+                document.getElementById('link-1'),
+                document.getElementById('link-2'),
+                document.getElementById('link-3'),
+                document.getElementById('link-4')
+            ];
+            const statusDiv = document.getElementById('status');
+            
+            // Function to generate links
+            function generateLinks() {
+                let robotNumber = robotInput.value.trim();
+                
+                if (!robotNumber) {
+                    updateStatus('Please enter a robot number', 'error');
+                    return;
+                }
+                
+                // Automatically add 6E prefix if not already present
+                let robotName;
+                if (robotNumber.toUpperCase().startsWith('6E')) {
+                    robotName = robotNumber.toUpperCase();
+                } else {
+                    robotName = "6E" + robotNumber;
+                }
+                
+                // Generate links
+                const links = createLinks(robotName);
+                
+                // Update link buttons
+                const descriptions = ["Drive Panel", "Robot Tickets", "Chassis Info", "Robot Kanban"];
+                linkButtons.forEach((btn, index) => {
+                    btn.href = links[index];
+                    btn.textContent = descriptions[index];
+                    btn.removeAttribute('disabled');
+                });
+                
+                updateStatus(`Generated 4 links for '${robotName}'`, 'info');
+            }
+            
+            // Function to create the actual links
+            function createLinks(robotName) {
+                const encodedName = encodeURIComponent(robotName);
+                
+                return [
+                    `https://drive.starship.xyz/drive/${encodedName}`,
+                    `https://starship.atlassian.net/issues/?jql=textfields%20~%20%22${encodedName}%2A%22&wildcardFlag=true`,
+                    `https://chassis-data-dashboard-v0-1513184538861817.aws.databricksapps.com/?q=${encodedName}&type=bot`,
+                    `https://starship.atlassian.net/jira/software/projects/NFO/boards/1467?jql=textfields%20~%20%22${encodedName}%2A%22`
+                ];
+            }
+            
+            // Function to update status message
+            function updateStatus(message, type) {
+                statusDiv.textContent = message;
+                statusDiv.className = 'status ' + type;
+            }
+            
+            // Event listeners
+            generateBtn.addEventListener('click', generateLinks);
+            
+            robotInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    generateLinks();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
