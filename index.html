@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robot Link Generator - Web Version</title>
+    <title>Robot Link Generator - Finland</title>
     <style>
         :root {
             --primary-color: #4285f4;
@@ -13,6 +13,8 @@
             --light-gray: #f5f5f5;
             --dark-gray: #333;
             --border-radius: 4px;
+            --grafana-orange: #ff780a;
+            --grafana-bg: #fff8f0;
         }
         
         * {
@@ -27,8 +29,14 @@
             color: var(--dark-gray);
             line-height: 1.6;
             padding: 20px;
-            max-width: 600px;
+            max-width: 1000px;
             margin: 0 auto;
+        }
+        
+        .main-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
         }
         
         .container {
@@ -36,6 +44,18 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 25px;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .grafana-container {
+            background-color: var(--grafana-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            flex: 1;
+            min-width: 300px;
+            border: 1px solid rgba(255, 120, 10, 0.2);
         }
         
         h1 {
@@ -48,6 +68,23 @@
         
         h1::before {
             content: "🤖";
+        }
+        
+        .grafana-title {
+            color: var(--grafana-orange);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .grafana-title::before {
+            content: "";
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path fill="%23ff780a" d="M16 0C7.2 0 0 7.2 0 16s7.2 16 16 16 16-7.2 16-16S24.8 0 16 0zm-2.4 24h-4.8V8h4.8v16zm9.6 0h-4.8V12h4.8v12zm4.8-16v16h4.8V8h-4.8z"/></svg>');
+            background-size: contain;
         }
         
         .subtitle {
@@ -164,6 +201,33 @@
             cursor: not-allowed;
         }
         
+        .grafana-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 8px;
+            padding: 10px 12px;
+            background-color: white;
+            border: 1px solid rgba(255, 120, 10, 0.3);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+        
+        .grafana-button:hover {
+            background-color: rgba(255, 120, 10, 0.1);
+            border-color: var(--grafana-orange);
+        }
+        
+        .grafana-button:disabled {
+            background-color: #f0f0f0;
+            color: #999;
+            cursor: not-allowed;
+        }
+        
         .status {
             margin-top: 15px;
             padding: 10px;
@@ -201,37 +265,62 @@
             font-size: 0.8rem;
             color: #888;
         }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Robot Link Generator</h1>
-        <p class="subtitle">Generate quick access links for robot information</p>
-        
-        <div class="input-group">
-            <label for="robot-number">Enter Robot Number:</label>
-            <div class="prefix-input">
-                <span class="prefix">6E</span>
-                <input type="text" id="robot-number" placeholder="e.g., 1234" autofocus maxlength="4">
+    <div class="main-container">
+        <div class="container">
+            <h1>Robot Link Generator Finland</h1>
+            <p class="subtitle">Generate quick access links for robot information</p>
+            
+            <div class="input-group">
+                <label for="robot-number">Enter Robot Number:</label>
+                <div class="prefix-input">
+                    <span class="prefix">6E</span>
+                    <input type="text" id="robot-number" placeholder="e.g., 1234" autofocus maxlength="4">
+                </div>
+                <p class="hint">6E prefix will be added automatically (max 4 numbers)</p>
+                <div class="error-message" id="number-error">Please enter only numbers (0-9)</div>
             </div>
-            <p class="hint">6E prefix will be added automatically (max 4 numbers)</p>
-            <div class="error-message" id="number-error">Please enter only numbers (0-9)</div>
+            
+            <button id="generate-btn">Generate Links</button>
+            
+            <div class="links-section">
+                <h2>Generated Links</h2>
+                <a href="#" class="link-button" id="link-1" target="_blank" disabled>Drive Panel</a>
+                <a href="#" class="link-button" id="link-2" target="_blank" disabled>Robot Tickets</a>
+                <a href="#" class="link-button" id="link-3" target="_blank" disabled>Chassis Info</a>
+                <a href="#" class="link-button" id="link-4" target="_blank" disabled>Robot NFO</a>
+                <a href="#" class="link-button" id="link-5" target="_blank" disabled>Robot FO</a>
+                <a href="#" class="link-button" id="link-6" target="_blank" disabled>CamCalib</a>
+            </div>
+            
+            <div id="status" class="status info">
+                Ready - Enter robot number (6E prefix will be added)
+            </div>
         </div>
         
-        <button id="generate-btn">Generate Links</button>
-        
-        <div class="links-section">
-            <h2>Generated Links</h2>
-            <a href="#" class="link-button" id="link-1" target="_blank" disabled>Drive Panel</a>
-            <a href="#" class="link-button" id="link-2" target="_blank" disabled>Robot Tickets</a>
-            <a href="#" class="link-button" id="link-3" target="_blank" disabled>Chassis Info</a>
-            <a href="#" class="link-button" id="link-4" target="_blank" disabled>Robot NFO</a>
-            <a href="#" class="link-button" id="link-5" target="_blank" disabled>Robot FO</a>
-            <a href="#" class="link-button" id="link-6" target="_blank" disabled>CamCalib</a>
-        </div>
-        
-        <div id="status" class="status info">
-            Ready - Enter robot number (6E prefix will be added)
+        <div class="grafana-container">
+            <h2 class="grafana-title">Grafana Dashboards</h2>
+            <p class="subtitle">Quick access to robot monitoring dashboards</p>
+            
+            <a href="#" class="grafana-button" id="grafana-1" target="_blank" disabled>GPS</a>
+            <a href="#" class="grafana-button" id="grafana-2" target="_blank" disabled>AHRS</a>
+            <a href="#" class="grafana-button" id="grafana-3" target="_blank" disabled>Radar</a>
+            <a href="#" class="grafana-button" id="grafana-4" target="_blank" disabled>AMD Robot Temperature</a>
+            <a href="#" class="grafana-button" id="grafana-5" target="_blank" disabled>Battery Panel</a>
+            <a href="#" class="grafana-button" id="grafana-6" target="_blank" disabled>CAN Performance</a>
+            <a href="#" class="grafana-button" id="grafana-7" target="_blank" disabled>Camera Hardware</a>
+            <a href="#" class="grafana-button" id="grafana-8" target="_blank" disabled>Faults</a>
+            <a href="#" class="grafana-button" id="grafana-9" target="_blank" disabled>Motor Dashboard</a>
+            <a href="#" class="grafana-button" id="grafana-10" target="_blank" disabled>TOF Faults</a>
+            <a href="#" class="grafana-button" id="grafana-11" target="_blank" disabled>Elmos Telemetry</a>
         </div>
     </div>
     
@@ -250,6 +339,19 @@
                 document.getElementById('link-4'),
                 document.getElementById('link-5'),
                 document.getElementById('link-6')
+            ];
+            const grafanaButtons = [
+                document.getElementById('grafana-1'),
+                document.getElementById('grafana-2'),
+                document.getElementById('grafana-3'),
+                document.getElementById('grafana-4'),
+                document.getElementById('grafana-5'),
+                document.getElementById('grafana-6'),
+                document.getElementById('grafana-7'),
+                document.getElementById('grafana-8'),
+                document.getElementById('grafana-9'),
+                document.getElementById('grafana-10'),
+                document.getElementById('grafana-11')
             ];
             const statusDiv = document.getElementById('status');
             const errorMessage = document.getElementById('number-error');
@@ -304,6 +406,7 @@
                 
                 // Generate links
                 const links = createLinks(robotName);
+                const grafanaLinks = createGrafanaLinks(robotName);
                 
                 // Update link buttons
                 const descriptions = ["Drive Panel", "Robot Tickets", "Chassis Info", "Robot NFO", "Robot FO", "CamCalib"];
@@ -313,7 +416,15 @@
                     btn.removeAttribute('disabled');
                 });
                 
-                updateStatus(`Generated 6 links for '${robotName}'`, 'info');
+                // Update Grafana buttons
+                const grafanaDescriptions = ["GPS", "AHRS", "Radar", "AMD Robot Temperature", "Battery Panel", "CAN Performance", "Camera Hardware", "Faults", "Motor Dashboard", "TOF Faults", "Elmos Telemetry"];
+                grafanaButtons.forEach((btn, index) => {
+                    btn.href = grafanaLinks[index];
+                    btn.textContent = grafanaDescriptions[index];
+                    btn.removeAttribute('disabled');
+                });
+                
+                updateStatus(`Generated links for '${robotName}'`, 'info');
             }
             
             // Function to create the actual links
@@ -327,6 +438,25 @@
                     `https://starship.atlassian.net/jira/software/projects/NFO/boards/1467?jql=textfields%20~%20%22${encodedName}%2A%22`,
                     `https://starship.atlassian.net/jira/software/projects/FO/boards/206?jql=textfields%20~%20%22${encodedName}%2A%22`,
                     `https://drive.starship.xyz/calibrate/${encodedName}`
+                ];
+            }
+            
+            // Function to create Grafana links
+            function createGrafanaLinks(robotName) {
+                const robotId = `amd-${robotName.toLowerCase()}`;
+                
+                return [
+                    `https://grafana.tools.starship.xyz/d/wIl-RYRik/gps?orgId=1&from=now-3h&to=now&timezone=Europe%2FHelsinki&var-robots=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/Ml7qi5EMk/ahrs-single-robot?orgId=1&from=now-2d&to=now&timezone=Europe%2FHelsinki&var-Robot=${robotId}`,
+                    `http://grafana.tools.starship.xyz/d/YaJCzEEik/radar?orgId=1&from=now-6h&to=now&timezone=Europe%2FHelsinki&var-robots=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/CypLJTdZz/amd-robots-temperature?orgId=1&from=now-30m&to=now&timezone=Europe%2FHelsinki&var-Robot=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/zxND994Mz/battery-panel?orgId=1&from=now-1h&to=now&timezone=Europe%2FHelsinki&var-batteryName=&var-chargerName=&var-botName=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/1cJlr0_Zz/can-performance?orgId=1&from=now-30d&to=now&timezone=Europe%2FHelsinki&var-Device=$__all&var-Robot=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/Yowl7YGGz/camera-hardware-status?orgId=1&from=now-1h&to=now&timezone=Europe%2FHelsinki&refresh=1m&var-robots=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/b5r0kyQZz/faults?orgId=1&from=now-6h&to=now&timezone=Europe%2FHelsinki&var-hw_platform=$__all&var-robots=${robotId}&var-group=none&var-update_path=$__all&var-component=uriel`,
+                    `https://grafana.tools.starship.xyz/d/34rK_x27z/motor-dashboard?orgId=1&from=now-7d&to=now&timezone=Europe%2FHelsinki&var-host=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/emYR9CK4k/tof-fault-dashboard?orgId=1&from=now-24h&to=now&timezone=Europe%2FHelsinki&var-robots=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/cdp9bsbvkp0qob/ultrasonic-elmos-telemetry?orgId=1&from=now-6h&to=now&timezone=Europe%2FHelsinki&var-host=${robotId}`
                 ];
             }
             
