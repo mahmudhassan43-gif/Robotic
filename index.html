@@ -73,21 +73,26 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1.4rem;
+            font-size: 1.2rem; /* Made smaller */
         }
 
+        h1::before {
+            content: "🤖";
+            font-size: 1.2rem;
+        }
+        
         .generated-title {
-            color: #003b99;
+            color: #003b99; /* Fixed color */
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1.4rem;
+            font-size: 1.1rem; /* Made same size as Grafana title */
         }
         
-        h1::before {
-            content: "🤖";
-            font-size: 1.2rem;
+        .generated-title::before {
+            content: "🔗"; /* Added link emoji */
+            font-size: 1.1rem;
         }
         
         .grafana-title {
@@ -96,7 +101,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 1.4rem;
+            font-size: 1.1rem;
         }
         
         .grafana-logo {
@@ -451,13 +456,15 @@
         <!-- Column 2: Generated Links -->
         <div class="column links-column">
             <div class="links-section">
-                <h2 class = "generated-title">Generated Links</h2>
+                <h2 class="generated-title">Generated Links</h2>
                 <a href="#" class="link-button" id="link-1" target="_blank" disabled>Drive Panel</a>
                 <a href="#" class="link-button" id="link-2" target="_blank" disabled>Robot Tickets</a>
                 <a href="#" class="link-button" id="link-3" target="_blank" disabled>Chassis Info</a>
+                <a href="#" class="link-button" id="link-6" target="_blank" disabled>CamCalib</a>
+                
+                <h2 class="generated-title" style="margin-top: 15px;">Finland Kanban</h2>
                 <a href="#" class="link-button" id="link-4" target="_blank" disabled>Robot NFO</a>
                 <a href="#" class="link-button" id="link-5" target="_blank" disabled>Robot FO</a>
-                <a href="#" class="link-button" id="link-6" target="_blank" disabled>CamCalib</a>
             </div>
         </div>
         
