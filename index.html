@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robot Link Generator Finland - Web Version</title>
+    <title>Robot Link Generator - Web Version</title>
     <style>
         :root {
             --primary-color: #4285f4;
@@ -205,7 +205,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Robot Link Generator FI</h1>
+        <h1>Robot Link Generator</h1>
         <p class="subtitle">Generate quick access links for robot information</p>
         
         <div class="input-group">
@@ -227,6 +227,7 @@
             <a href="#" class="link-button" id="link-3" target="_blank" disabled>Chassis Info</a>
             <a href="#" class="link-button" id="link-4" target="_blank" disabled>Robot NFO</a>
             <a href="#" class="link-button" id="link-5" target="_blank" disabled>Robot FO</a>
+            <a href="#" class="link-button" id="link-6" target="_blank" disabled>CamCalib</a>
         </div>
         
         <div id="status" class="status info">
@@ -247,7 +248,8 @@
                 document.getElementById('link-2'),
                 document.getElementById('link-3'),
                 document.getElementById('link-4'),
-                document.getElementById('link-5')
+                document.getElementById('link-5'),
+                document.getElementById('link-6')
             ];
             const statusDiv = document.getElementById('status');
             const errorMessage = document.getElementById('number-error');
@@ -304,14 +306,14 @@
                 const links = createLinks(robotName);
                 
                 // Update link buttons
-                const descriptions = ["Drive Panel", "Robot Tickets", "Chassis Info", "Robot NFO", "Robot FO"];
+                const descriptions = ["Drive Panel", "Robot Tickets", "Chassis Info", "Robot NFO", "Robot FO", "CamCalib"];
                 linkButtons.forEach((btn, index) => {
                     btn.href = links[index];
                     btn.textContent = descriptions[index];
                     btn.removeAttribute('disabled');
                 });
                 
-                updateStatus(`Generated 5 links for '${robotName}'`, 'info');
+                updateStatus(`Generated 6 links for '${robotName}'`, 'info');
             }
             
             // Function to create the actual links
@@ -323,7 +325,8 @@
                     `https://starship.atlassian.net/issues/?jql=textfields%20~%20%22${encodedName}%2A%22&wildcardFlag=true`,
                     `https://chassis-data-dashboard-v0-1513184538861817.aws.databricksapps.com/?q=${encodedName}&type=bot`,
                     `https://starship.atlassian.net/jira/software/projects/NFO/boards/1467?jql=textfields%20~%20%22${encodedName}%2A%22`,
-                    `https://starship.atlassian.net/jira/software/projects/FO/boards/206?jql=textfields%20~%20%22${encodedName}%2A%22`
+                    `https://starship.atlassian.net/jira/software/projects/FO/boards/206?jql=textfields%20~%20%22${encodedName}%2A%22`,
+                    `https://drive.starship.xyz/calibrate/${encodedName}`
                 ];
             }
             
