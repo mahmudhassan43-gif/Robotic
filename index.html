@@ -29,7 +29,7 @@
             color: var(--dark-gray);
             line-height: 1.4;
             padding: 15px;
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
@@ -39,22 +39,29 @@
             flex-wrap: wrap;
         }
         
-        .container {
+        .column {
             background-color: white;
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            flex: 1;
-            min-width: 280px;
+            display: flex;
+            flex-direction: column;
         }
         
-        .grafana-container {
-            background-color: var(--grafana-bg);
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+        .input-column {
             flex: 1;
-            min-width: 280px;
+            min-width: 250px;
+        }
+        
+        .links-column {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .grafana-column {
+            flex: 2;
+            min-width: 300px;
+            background-color: var(--grafana-bg);
             border: 1px solid rgba(255, 120, 10, 0.2);
         }
         
@@ -167,9 +174,9 @@
         }
         
         .links-section {
-            margin-top: 20px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .links-section h2 {
@@ -202,6 +209,12 @@
             background-color: #f0f0f0;
             color: #999;
             cursor: not-allowed;
+        }
+        
+        .grafana-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .grafana-button {
@@ -267,20 +280,6 @@
             text-align: center;
             font-size: 0.75rem;
             color: #888;
-        }
-        
-        @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-            }
-            
-            body {
-                padding: 10px;
-            }
-            
-            .container, .grafana-container {
-                padding: 15px;
-            }
         }
         
         /* Time Range Slider Styles */
@@ -359,6 +358,21 @@
             flex: 1;
         }
         
+        /* Responsive layout */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            body {
+                padding: 10px;
+            }
+            
+            .column {
+                padding: 15px;
+            }
+        }
+        
         /* Compact layout for very small screens */
         @media (max-width: 480px) {
             h1, .grafana-title {
@@ -379,7 +393,8 @@
 </head>
 <body>
     <div class="main-container">
-        <div class="container">
+        <!-- Column 1: Input, Generate Button, Time Slider, Status -->
+        <div class="column input-column">
             <h1>Robot Link Generator Finland</h1>
             <p class="subtitle">Generate quick access links for robot information</p>
             
@@ -394,28 +409,6 @@
             </div>
             
             <button id="generate-btn">Generate Links</button>
-            
-            <div class="links-section">
-                <h2>Generated Links</h2>
-                <a href="#" class="link-button" id="link-1" target="_blank" disabled>Drive Panel</a>
-                <a href="#" class="link-button" id="link-2" target="_blank" disabled>Robot Tickets</a>
-                <a href="#" class="link-button" id="link-3" target="_blank" disabled>Chassis Info</a>
-                <a href="#" class="link-button" id="link-4" target="_blank" disabled>Robot NFO</a>
-                <a href="#" class="link-button" id="link-5" target="_blank" disabled>Robot FO</a>
-                <a href="#" class="link-button" id="link-6" target="_blank" disabled>CamCalib</a>
-            </div>
-            
-            <div id="status" class="status info">
-                Ready - Enter robot number (6E prefix will be added)
-            </div>
-        </div>
-        
-        <div class="grafana-container">
-            <h2 class="grafana-title">
-                <img src="Grafana_logo.svg.png" alt="Grafana Logo" class="grafana-logo">
-                Grafana Dashboards
-            </h2>
-            <p class="subtitle">Quick access to robot monitoring dashboards</p>
             
             <div class="time-range-container">
                 <div class="time-range-label">
@@ -438,17 +431,45 @@
                 </div>
             </div>
             
-            <a href="#" class="grafana-button" id="grafana-1" target="_blank" disabled>GPS</a>
-            <a href="#" class="grafana-button" id="grafana-2" target="_blank" disabled>AHRS</a>
-            <a href="#" class="grafana-button" id="grafana-3" target="_blank" disabled>Radar</a>
-            <a href="#" class="grafana-button" id="grafana-4" target="_blank" disabled>AMD Robot Temperature</a>
-            <a href="#" class="grafana-button" id="grafana-5" target="_blank" disabled>Battery Panel</a>
-            <a href="#" class="grafana-button" id="grafana-6" target="_blank" disabled>CAN Performance</a>
-            <a href="#" class="grafana-button" id="grafana-7" target="_blank" disabled>Camera Hardware</a>
-            <a href="#" class="grafana-button" id="grafana-8" target="_blank" disabled>Faults</a>
-            <a href="#" class="grafana-button" id="grafana-9" target="_blank" disabled>Motor Dashboard</a>
-            <a href="#" class="grafana-button" id="grafana-10" target="_blank" disabled>TOF Faults</a>
-            <a href="#" class="grafana-button" id="grafana-11" target="_blank" disabled>Elmos Telemetry</a>
+            <div id="status" class="status info">
+                Ready - Enter robot number (6E prefix will be added)
+            </div>
+        </div>
+        
+        <!-- Column 2: Generated Links -->
+        <div class="column links-column">
+            <div class="links-section">
+                <h2>Generated Links</h2>
+                <a href="#" class="link-button" id="link-1" target="_blank" disabled>Drive Panel</a>
+                <a href="#" class="link-button" id="link-2" target="_blank" disabled>Robot Tickets</a>
+                <a href="#" class="link-button" id="link-3" target="_blank" disabled>Chassis Info</a>
+                <a href="#" class="link-button" id="link-4" target="_blank" disabled>Robot NFO</a>
+                <a href="#" class="link-button" id="link-5" target="_blank" disabled>Robot FO</a>
+                <a href="#" class="link-button" id="link-6" target="_blank" disabled>CamCalib</a>
+            </div>
+        </div>
+        
+        <!-- Column 3: Grafana Links -->
+        <div class="column grafana-column">
+            <div class="grafana-section">
+                <h2 class="grafana-title">
+                    <img src="Grafana_logo.svg.png" alt="Grafana Logo" class="grafana-logo">
+                    Grafana Dashboards
+                </h2>
+                <p class="subtitle">Quick access to robot monitoring dashboards</p>
+                
+                <a href="#" class="grafana-button" id="grafana-1" target="_blank" disabled>GPS</a>
+                <a href="#" class="grafana-button" id="grafana-2" target="_blank" disabled>AHRS</a>
+                <a href="#" class="grafana-button" id="grafana-3" target="_blank" disabled>Radar</a>
+                <a href="#" class="grafana-button" id="grafana-4" target="_blank" disabled>AMD Robot Temperature</a>
+                <a href="#" class="grafana-button" id="grafana-5" target="_blank" disabled>Battery Panel</a>
+                <a href="#" class="grafana-button" id="grafana-6" target="_blank" disabled>CAN Performance</a>
+                <a href="#" class="grafana-button" id="grafana-7" target="_blank" disabled>Camera Hardware</a>
+                <a href="#" class="grafana-button" id="grafana-8" target="_blank" disabled>Faults</a>
+                <a href="#" class="grafana-button" id="grafana-9" target="_blank" disabled>Motor Dashboard</a>
+                <a href="#" class="grafana-button" id="grafana-10" target="_blank" disabled>TOF Faults</a>
+                <a href="#" class="grafana-button" id="grafana-11" target="_blank" disabled>Elmos Telemetry</a>
+            </div>
         </div>
     </div>
     
