@@ -78,13 +78,9 @@
             gap: 10px;
         }
         
-        .grafana-title::before {
-            content: "";
-            display: inline-block;
+        .grafana-logo {
             width: 24px;
             height: 24px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path fill="%23ff780a" d="M16 0C7.2 0 0 7.2 0 16s7.2 16 16 16 16-7.2 16-16S24.8 0 16 0zm-2.4 24h-4.8V8h4.8v16zm9.6 0h-4.8V12h4.8v12zm4.8-16v16h4.8V8h-4.8z"/></svg>');
-            background-size: contain;
         }
         
         .subtitle {
@@ -381,7 +377,10 @@
         </div>
         
         <div class="grafana-container">
-            <h2 class="grafana-title">Grafana Dashboards</h2>
+            <h2 class="grafana-title">
+                <img src="Grafana_logo.svg.png" alt="Grafana Logo" class="grafana-logo">
+                Grafana Dashboards
+            </h2>
             <p class="subtitle">Quick access to robot monitoring dashboards</p>
             
             <div class="time-range-container">
