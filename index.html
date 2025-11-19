@@ -99,6 +99,13 @@
             margin-top: 5px;
         }
         
+        .error-message {
+            font-size: 0.8rem;
+            color: var(--danger-color);
+            margin-top: 5px;
+            display: none;
+        }
+        
         button {
             background-color: var(--primary-color);
             color: white;
@@ -205,9 +212,10 @@
             <label for="robot-number">Enter Robot Number:</label>
             <div class="prefix-input">
                 <span class="prefix">6E</span>
-                <input type="text" id="robot-number" placeholder="e.g., 12345" autofocus>
+                <input type="text" id="robot-number" placeholder="e.g., 1234" autofocus maxlength="4">
             </div>
-            <p class="hint">6E prefix will be added automatically</p>
+            <p class="hint">6E prefix will be added automatically (max 4 numbers)</p>
+            <div class="error-message" id="number-error">Please enter only numbers (0-9)</div>
         </div>
         
         <button id="generate-btn">Generate Links</button>
@@ -217,7 +225,8 @@
             <a href="#" class="link-button" id="link-1" target="_blank" disabled>Drive Panel</a>
             <a href="#" class="link-button" id="link-2" target="_blank" disabled>Robot Tickets</a>
             <a href="#" class="link-button" id="link-3" target="_blank" disabled>Chassis Info</a>
-            <a href="#" class="link-button" id="link-4" target="_blank" disabled>Robot Kanban</a>
+            <a href="#" class="link-button" id="link-4" target="_blank" disabled>Robot NFO</a>
+            <a href="#" class="link-button" id="link-5" target="_blank" disabled>Robot FO</a>
         </div>
         
         <div id="status" class="status info">
@@ -237,9 +246,36 @@
                 document.getElementById('link-1'),
                 document.getElementById('link-2'),
                 document.getElementById('link-3'),
-                document.getElementById('link-4')
+                document.getElementById('link-4'),
+                document.getElementById('link-5')
             ];
             const statusDiv = document.getElementById('status');
+            const errorMessage = document.getElementById('number-error');
+            
+            // Function to validate input (only numbers, max 4 digits)
+            function validateInput(input) {
+                const value = input.value.trim();
+                
+                // Check if input is empty
+                if (value === '') {
+                    errorMessage.style.display = 'none';
+                    return true;
+                }
+                
+                // Check if input contains only numbers
+                if (!/^\d+$/.test(value)) {
+                    errorMessage.style.display = 'block';
+                    return false;
+                }
+                
+                // Check if input exceeds 4 digits
+                if (value.length > 4) {
+                    input.value = value.slice(0, 4); // Truncate to 4 digits
+                }
+                
+                errorMessage.style.display = 'none';
+                return true;
+            }
             
             // Function to generate links
             function generateLinks() {
@@ -247,6 +283,12 @@
                 
                 if (!robotNumber) {
                     updateStatus('Please enter a robot number', 'error');
+                    return;
+                }
+                
+                // Validate input
+                if (!validateInput(robotInput)) {
+                    updateStatus('Please enter only numbers (0-9)', 'error');
                     return;
                 }
                 
@@ -262,14 +304,14 @@
                 const links = createLinks(robotName);
                 
                 // Update link buttons
-                const descriptions = ["Drive Panel", "Robot Tickets", "Chassis Info", "Robot Kanban"];
+                const descriptions = ["Drive Panel", "Robot Tickets", "Chassis Info", "Robot NFO", "Robot FO"];
                 linkButtons.forEach((btn, index) => {
                     btn.href = links[index];
                     btn.textContent = descriptions[index];
                     btn.removeAttribute('disabled');
                 });
                 
-                updateStatus(`Generated 4 links for '${robotName}'`, 'info');
+                updateStatus(`Generated 5 links for '${robotName}'`, 'info');
             }
             
             // Function to create the actual links
@@ -280,7 +322,8 @@
                     `https://drive.starship.xyz/drive/${encodedName}`,
                     `https://starship.atlassian.net/issues/?jql=textfields%20~%20%22${encodedName}%2A%22&wildcardFlag=true`,
                     `https://chassis-data-dashboard-v0-1513184538861817.aws.databricksapps.com/?q=${encodedName}&type=bot`,
-                    `https://starship.atlassian.net/jira/software/projects/NFO/boards/1467?jql=textfields%20~%20%22${encodedName}%2A%22`
+                    `https://starship.atlassian.net/jira/software/projects/NFO/boards/1467?jql=textfields%20~%20%22${encodedName}%2A%22`,
+                    `https://starship.atlassian.net/jira/software/projects/FO/boards/206?jql=textfields%20~%20%22${encodedName}%2A%22`
                 ];
             }
             
@@ -294,8 +337,31 @@
             generateBtn.addEventListener('click', generateLinks);
             
             robotInput.addEventListener('keypress', function(e) {
+                // Allow only numeric characters
+                if (!/[0-9]/.test(e.key) && e.key !== 'Enter') {
+                    e.preventDefault();
+                    return;
+                }
+                
                 if (e.key === 'Enter') {
                     generateLinks();
+                }
+            });
+            
+            robotInput.addEventListener('input', function() {
+                validateInput(this);
+                
+                // Auto-generate links if we have exactly 4 digits
+                if (this.value.length === 4 && /^\d+$/.test(this.value)) {
+                    generateLinks();
+                }
+            });
+            
+            // Prevent paste of non-numeric content
+            robotInput.addEventListener('paste', function(e) {
+                const pasteData = e.clipboardData.getData('text');
+                if (!/^\d+$/.test(pasteData)) {
+                    e.preventDefault();
                 }
             });
         });
