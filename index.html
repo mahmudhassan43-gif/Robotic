@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robot Link Generator - Finland</title>
+    <title>Robot Link Generator - Web Version</title>
     <style>
         :root {
             --primary-color: #4285f4;
@@ -271,12 +271,86 @@
                 flex-direction: column;
             }
         }
+        
+        /* Time Range Slider Styles */
+        .time-range-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 120, 10, 0.3);
+        }
+        
+        .time-range-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .time-range-label span {
+            font-weight: 500;
+            color: var(--grafana-orange);
+        }
+        
+        .time-range-value {
+            font-weight: bold;
+            color: var(--dark-gray);
+            background-color: rgba(255, 120, 10, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .time-slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ddd;
+            outline: none;
+            border-radius: 4px;
+        }
+        
+        .time-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--grafana-orange);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .time-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--grafana-orange);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .time-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+        
+        .time-step {
+            text-align: center;
+            flex: 1;
+        }
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="container">
-            <h1>Robot Link Generator Finland</h1>
+            <h1>Robot Link Generator</h1>
             <p class="subtitle">Generate quick access links for robot information</p>
             
             <div class="input-group">
@@ -310,6 +384,27 @@
             <h2 class="grafana-title">Grafana Dashboards</h2>
             <p class="subtitle">Quick access to robot monitoring dashboards</p>
             
+            <div class="time-range-container">
+                <div class="time-range-label">
+                    <span>Time Range:</span>
+                    <div class="time-range-value" id="time-range-value">3h</div>
+                </div>
+                <input type="range" min="0" max="10" value="4" class="time-slider" id="time-slider">
+                <div class="time-steps">
+                    <div class="time-step">5m</div>
+                    <div class="time-step">15m</div>
+                    <div class="time-step">30m</div>
+                    <div class="time-step">1h</div>
+                    <div class="time-step">3h</div>
+                    <div class="time-step">6h</div>
+                    <div class="time-step">12h</div>
+                    <div class="time-step">24h</div>
+                    <div class="time-step">2d</div>
+                    <div class="time-step">7d</div>
+                    <div class="time-step">30d</div>
+                </div>
+            </div>
+            
             <a href="#" class="grafana-button" id="grafana-1" target="_blank" disabled>GPS</a>
             <a href="#" class="grafana-button" id="grafana-2" target="_blank" disabled>AHRS</a>
             <a href="#" class="grafana-button" id="grafana-3" target="_blank" disabled>Radar</a>
@@ -332,6 +427,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const robotInput = document.getElementById('robot-number');
             const generateBtn = document.getElementById('generate-btn');
+            const timeSlider = document.getElementById('time-slider');
+            const timeRangeValue = document.getElementById('time-range-value');
+            
             const linkButtons = [
                 document.getElementById('link-1'),
                 document.getElementById('link-2'),
@@ -340,6 +438,7 @@
                 document.getElementById('link-5'),
                 document.getElementById('link-6')
             ];
+            
             const grafanaButtons = [
                 document.getElementById('grafana-1'),
                 document.getElementById('grafana-2'),
@@ -353,8 +452,17 @@
                 document.getElementById('grafana-10'),
                 document.getElementById('grafana-11')
             ];
+            
             const statusDiv = document.getElementById('status');
             const errorMessage = document.getElementById('number-error');
+            
+            // Time range options
+            const timeRanges = [
+                "5m", "15m", "30m", "1h", "3h", "6h", "12h", "24h", "2d", "7d", "30d"
+            ];
+            
+            // Set initial time range value
+            timeRangeValue.textContent = timeRanges[4]; // Default to 3h
             
             // Function to validate input (only numbers, max 4 digits)
             function validateInput(input) {
@@ -404,9 +512,13 @@
                     robotName = "6E" + robotNumber;
                 }
                 
+                // Get current time range
+                const timeRangeIndex = parseInt(timeSlider.value);
+                const timeRange = timeRanges[timeRangeIndex];
+                
                 // Generate links
                 const links = createLinks(robotName);
-                const grafanaLinks = createGrafanaLinks(robotName);
+                const grafanaLinks = createGrafanaLinks(robotName, timeRange);
                 
                 // Update link buttons
                 const descriptions = ["Drive Panel", "Robot Tickets", "Chassis Info", "Robot NFO", "Robot FO", "CamCalib"];
@@ -424,7 +536,7 @@
                     btn.removeAttribute('disabled');
                 });
                 
-                updateStatus(`Generated links for '${robotName}'`, 'info');
+                updateStatus(`Generated links for '${robotName}' with time range: ${timeRange}`, 'info');
             }
             
             // Function to create the actual links
@@ -441,22 +553,22 @@
                 ];
             }
             
-            // Function to create Grafana links
-            function createGrafanaLinks(robotName) {
+            // Function to create Grafana links with time range
+            function createGrafanaLinks(robotName, timeRange) {
                 const robotId = `amd-${robotName.toLowerCase()}`;
                 
                 return [
-                    `https://grafana.tools.starship.xyz/d/wIl-RYRik/gps?orgId=1&from=now-3h&to=now&timezone=Europe%2FHelsinki&var-robots=${robotId}`,
-                    `https://grafana.tools.starship.xyz/d/Ml7qi5EMk/ahrs-single-robot?orgId=1&from=now-2d&to=now&timezone=Europe%2FHelsinki&var-Robot=${robotId}`,
-                    `http://grafana.tools.starship.xyz/d/YaJCzEEik/radar?orgId=1&from=now-6h&to=now&timezone=Europe%2FHelsinki&var-robots=${robotId}`,
-                    `https://grafana.tools.starship.xyz/d/CypLJTdZz/amd-robots-temperature?orgId=1&from=now-30m&to=now&timezone=Europe%2FHelsinki&var-Robot=${robotId}`,
-                    `https://grafana.tools.starship.xyz/d/zxND994Mz/battery-panel?orgId=1&from=now-1h&to=now&timezone=Europe%2FHelsinki&var-batteryName=&var-chargerName=&var-botName=${robotId}`,
-                    `https://grafana.tools.starship.xyz/d/1cJlr0_Zz/can-performance?orgId=1&from=now-30d&to=now&timezone=Europe%2FHelsinki&var-Device=$__all&var-Robot=${robotId}`,
-                    `https://grafana.tools.starship.xyz/d/Yowl7YGGz/camera-hardware-status?orgId=1&from=now-1h&to=now&timezone=Europe%2FHelsinki&refresh=1m&var-robots=${robotId}`,
-                    `https://grafana.tools.starship.xyz/d/b5r0kyQZz/faults?orgId=1&from=now-6h&to=now&timezone=Europe%2FHelsinki&var-hw_platform=$__all&var-robots=${robotId}&var-group=none&var-update_path=$__all&var-component=uriel`,
-                    `https://grafana.tools.starship.xyz/d/34rK_x27z/motor-dashboard?orgId=1&from=now-7d&to=now&timezone=Europe%2FHelsinki&var-host=${robotId}`,
-                    `https://grafana.tools.starship.xyz/d/emYR9CK4k/tof-fault-dashboard?orgId=1&from=now-24h&to=now&timezone=Europe%2FHelsinki&var-robots=${robotId}`,
-                    `https://grafana.tools.starship.xyz/d/cdp9bsbvkp0qob/ultrasonic-elmos-telemetry?orgId=1&from=now-6h&to=now&timezone=Europe%2FHelsinki&var-host=${robotId}`
+                    `https://grafana.tools.starship.xyz/d/wIl-RYRik/gps?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-robots=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/Ml7qi5EMk/ahrs-single-robot?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-Robot=${robotId}`,
+                    `http://grafana.tools.starship.xyz/d/YaJCzEEik/radar?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-robots=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/CypLJTdZz/amd-robots-temperature?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-Robot=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/zxND994Mz/battery-panel?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-batteryName=&var-chargerName=&var-botName=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/1cJlr0_Zz/can-performance?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-Device=$__all&var-Robot=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/Yowl7YGGz/camera-hardware-status?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&refresh=1m&var-robots=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/b5r0kyQZz/faults?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-hw_platform=$__all&var-robots=${robotId}&var-group=none&var-update_path=$__all&var-component=uriel`,
+                    `https://grafana.tools.starship.xyz/d/34rK_x27z/motor-dashboard?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-host=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/emYR9CK4k/tof-fault-dashboard?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-robots=${robotId}`,
+                    `https://grafana.tools.starship.xyz/d/cdp9bsbvkp0qob/ultrasonic-elmos-telemetry?orgId=1&from=now-${timeRange}&to=now&timezone=Europe%2FHelsinki&var-host=${robotId}`
                 ];
             }
             
@@ -468,6 +580,17 @@
             
             // Event listeners
             generateBtn.addEventListener('click', generateLinks);
+            
+            // Time slider event listener
+            timeSlider.addEventListener('input', function() {
+                const timeRangeIndex = parseInt(this.value);
+                timeRangeValue.textContent = timeRanges[timeRangeIndex];
+                
+                // Regenerate Grafana links if robot number is already entered
+                if (robotInput.value.trim().length === 4 && /^\d+$/.test(robotInput.value.trim())) {
+                    generateLinks();
+                }
+            });
             
             robotInput.addEventListener('keypress', function(e) {
                 // Allow only numeric characters
